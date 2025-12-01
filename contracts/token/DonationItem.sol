@@ -5,15 +5,21 @@ pragma solidity ^0.8.27;
 
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import {ERC721Burnable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 
-contract DonationItem is ERC721, ERC721Burnable, AccessControl {
+contract DonationItem is ERC721, AccessControl {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     uint256 private _nextTokenId;
+
+    struct Location  {
+        string location;    //traçat de la localització del item, la 1a es la creació
+        uint256 timestamp;  //dates de modificació, la 1a es la creació
+        bool used; //si s'ha gastat o no el producte/donació
+    }
+
     struct TokenData {
         string description;  //que es? Ex: Paquet Arròs 1 Kg
+        Location[] locations;   
         uint256 expiration;  //si es menjar, quan caduca
-        bool used;  //si s'ha gastat o no el producte/donació
     }
     mapping(uint256 => TokenData) public tokenData;
     
@@ -23,15 +29,20 @@ contract DonationItem is ERC721, ERC721Burnable, AccessControl {
     }
 
 
-    function safeMint(address to, string memory description, uint256 expiration) public onlyRole(MINTER_ROLE) returns (uint256) {  //func per crear un token
+    function safeMint(address to, string memory description, uint256 expiration, string memory initialLocation) public onlyRole(MINTER_ROLE) returns (uint256) {  //func per crear un token
         uint256 tokenId = _nextTokenId++;
-        _safeMint(to, tokenId);
-        
-        tokenData[tokenId] = TokenData({
-        description: description,
-        expiration: expiration,
-        used: false
-        });
+        _safeMint(to, tokenId);  //el to es el donant
+
+
+        TokenData storage td = tokenData[tokenId];
+        td.description = description;
+        td.expiration = expiration;
+
+        td.locations.push(Location({
+            location: initialLocation,
+            timestamp: block.timestamp,
+            used: false
+        }));
 
         return tokenId;
     }
@@ -48,13 +59,20 @@ contract DonationItem is ERC721, ERC721Burnable, AccessControl {
     }
     
     //custom
-    function markAsUsed(uint256 tokenId) public onlyRole(MINTER_ROLE) {
-        require(tokenExists(tokenId), "Token no existe");
-        require(!tokenData[tokenId].used, "Ya usado");
-        tokenData[tokenId].used = true;
+    function markAsUsed(uint256 tokenId, string memory location, bool used) public onlyRole(MINTER_ROLE) {
+        
+            tokenData[tokenId].locations.push(Location({
+                location: location,
+                timestamp: block.timestamp,
+                used: used
+            }));
     }
 
-    function tokenExists(uint256 tokenId) internal view returns (bool) {  //auxiliar
+    function isUsed(uint256 tokenId) public view returns (bool) {  //auxiliar
+        Location memory loc = tokenData[tokenId].locations[tokenData[tokenId].locations.length - 1];
+        require(!loc.used, "Fet servir");
+    }
+    function exists(uint256 tokenId) public view returns (bool){
         try this.ownerOf(tokenId) returns (address) {
             return true;
         } catch {
@@ -62,8 +80,14 @@ contract DonationItem is ERC721, ERC721Burnable, AccessControl {
         }
     }
 
-
     function isExpired(uint256 tokenId) public view returns (bool) {
         return block.timestamp > tokenData[tokenId].expiration;
-}
+    }
+
+    function getTokenData(uint256 tokenId) public view returns (string memory description, Location[] memory locations, uint256 expiration){
+    
+        TokenData memory data = tokenData[tokenId];
+        return (data.description, data.locations, data.expiration);
+    }
+
 }

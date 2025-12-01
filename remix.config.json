@@ -1,5 +1,12 @@
 {
   "project": "ozerc721",
   "version": "1.2.0",
-  "IDE": "remix.ethereum.org"
+  "IDE": "remix.ethereum.org",
+  "script-runner": {
+    "defaultConfig": "ethers6",
+    "customConfig": {
+      "baseConfiguration": "default",
+      "dependencies": []
+    }
+  }
 }

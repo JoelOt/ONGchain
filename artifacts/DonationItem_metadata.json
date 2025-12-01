@@ -366,9 +366,15 @@
 						"type": "uint256"
 					}
 				],
-				"name": "burn",
-				"outputs": [],
-				"stateMutability": "nonpayable",
+				"name": "exists",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -404,6 +410,52 @@
 						"internalType": "bytes32",
 						"name": "",
 						"type": "bytes32"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					}
+				],
+				"name": "getTokenData",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
+					},
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "location",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "timestamp",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bool",
+								"name": "used",
+								"type": "bool"
+							}
+						],
+						"internalType": "struct DonationItem.Location[]",
+						"name": "locations",
+						"type": "tuple[]"
+					},
+					{
+						"internalType": "uint256",
+						"name": "expiration",
+						"type": "uint256"
 					}
 				],
 				"stateMutability": "view",
@@ -502,6 +554,35 @@
 						"type": "uint256"
 					}
 				],
+				"name": "isUsed",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "location",
+						"type": "string"
+					},
+					{
+						"internalType": "bool",
+						"name": "used",
+						"type": "bool"
+					}
+				],
 				"name": "markAsUsed",
 				"outputs": [],
 				"stateMutability": "nonpayable",
@@ -591,6 +672,11 @@
 						"internalType": "uint256",
 						"name": "expiration",
 						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "initialLocation",
+						"type": "string"
 					}
 				],
 				"name": "safeMint",
@@ -724,11 +810,6 @@
 						"internalType": "uint256",
 						"name": "expiration",
 						"type": "uint256"
-					},
-					{
-						"internalType": "bool",
-						"name": "used",
-						"type": "bool"
 					}
 				],
 				"stateMutability": "view",
@@ -885,9 +966,6 @@
 				"balanceOf(address)": {
 					"details": "Returns the number of tokens in ``owner``'s account."
 				},
-				"burn(uint256)": {
-					"details": "Burns `tokenId`. See {ERC721-_burn}. Requirements: - The caller must own `tokenId` or be an approved operator."
-				},
 				"getApproved(uint256)": {
 					"details": "Returns the account approved for `tokenId` token. Requirements: - `tokenId` must exist."
 				},
@@ -1006,14 +1084,6 @@
 				"dweb:/ipfs/Qmeeph7fsDyfRr8vb2L8KcDEmKPb224TAayMvgqgGAnqpL"
 			]
 		},
-		"@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol": {
-			"keccak256": "0xdee1ff07172e443c6600581fc4f11e7830a6d33e4e551752935b835d52a09404",
-			"license": "MIT",
-			"urls": [
-				"bzz-raw://c503b5573ecd8d18157903b6760e02e8f86b47238c997d6dd04b99df74ef532d",
-				"dweb:/ipfs/QmSGcRgfe18dtR4t3erYBSq3W6tPGXHPZ3JKkD1yFJsNsm"
-			]
-		},
 		"@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol": {
 			"keccak256": "0xf46268c37522320bb2119a5a394bc5c739a95c0c574c8d08e8c643f4d06e5c76",
 			"license": "MIT",
@@ -1095,11 +1165,11 @@
 			]
 		},
 		"contracts/token/DonationItem.sol": {
-			"keccak256": "0x8b19cbaca597e8aabb5bdce3edf6654f53629a99c6f517bb3fd0fa4c5bb81452",
+			"keccak256": "0x4aeb1c57605724618197fb45172df9dcd2c25521d46498c87213da57dc1a4947",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://b07e960b02e171f901dfcd065afe84f6fd6325d08866356f00a15267bdeebbe0",
-				"dweb:/ipfs/QmaEc4dj89WreiNrmq1ZU6MWVZjD8kofFJpZ4qqmN8rGMJ"
+				"bzz-raw://cf888d1857a9c68f611632f60f7a72a745c954a86f74f5253f73a07c3a5d7413",
+				"dweb:/ipfs/QmeqGL4cyV2SFxfUkaWTYs9gJmW8gJmDWDH7Cudyutyz2u"
 			]
 		}
 	},
