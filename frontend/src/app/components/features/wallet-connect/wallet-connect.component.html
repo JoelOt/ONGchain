@@ -1,0 +1,31 @@
+<div class="wallet-connect">
+    @if (!walletState().connected) {
+    <button class="connect-btn" (click)="connect()" [disabled]="connecting()">
+        @if (connecting()) {
+        <span class="spinner"></span>
+        Conectando...
+        } @else {
+        🦊 Conectar Wallet
+        }
+    </button>
+    } @else {
+    <div class="wallet-info">
+        <div class="network-indicator" [class.wrong-network]="isWrongNetwork()">
+            <span class="dot"></span>
+            {{ networkName() }}
+        </div>
+        <div class="address">
+            {{ formattedAddress() }}
+        </div>
+        <button class="disconnect-btn" (click)="disconnect()">
+            Desconectar
+        </button>
+    </div>
+    }
+
+    @if (error()) {
+    <div class="error-message">
+        {{ error() }}
+    </div>
+    }
+</div>

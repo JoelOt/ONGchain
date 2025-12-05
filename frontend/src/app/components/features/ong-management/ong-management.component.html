@@ -1,0 +1,63 @@
+<div class="ong-management">
+    <div class="page-header">
+        <h2>🏢 Gestión de ONGs</h2>
+        <p>Autoriza o revoca el acceso de ONGs para emitir tokens de donación</p>
+    </div>
+
+    <div class="authorize-section">
+        <h3>Autorizar Nueva ONG</h3>
+        <div class="form-group">
+            <input type="text" [(ngModel)]="newOngAddress" placeholder="Dirección Ethereum (0x...)"
+                class="address-input" [class.error]="addressError()" />
+            @if (addressError()) {
+            <span class="error-text">{{ addressError() }}</span>
+            }
+        </div>
+        <button (click)="authorizeONG()" [disabled]="loading() || !newOngAddress" class="authorize-btn">
+            @if (loading()) {
+            <span class="spinner"></span>
+            Procesando...
+            } @else {
+            ✓ Autorizar ONG
+            }
+        </button>
+    </div>
+
+    @if (success()) {
+    <div class="success-box">
+        ✓ {{ success() }}
+    </div>
+    }
+
+    @if (error()) {
+    <div class="error-box">
+        ❌ {{ error() }}
+    </div>
+    }
+
+    <div class="check-section">
+        <h3>Verificar Estado de ONG</h3>
+        <div class="check-form">
+            <input type="text" [(ngModel)]="checkAddress" placeholder="Dirección a verificar" class="address-input" />
+            <button (click)="checkONG()" [disabled]="!checkAddress" class="check-btn">
+                Verificar
+            </button>
+        </div>
+        @if (checkResult()) {
+        <div class="check-result" [class.authorized]="checkResult()!.isAuthorized">
+            @if (checkResult()!.isAuthorized) {
+            <span class="status-icon">✓</span>
+            <span>Esta dirección está autorizada como ONG</span>
+            } @else {
+            <span class="status-icon">✗</span>
+            <span>Esta dirección NO está autorizada</span>
+            }
+            @if (checkResult()!.isAuthorized) {
+            <button (click)="revokeONG(checkAddress)" class="revoke-btn">
+                Revocar Autorización
+            </button>
+            }
+        </div>
+        }
+    </div>
+</div>

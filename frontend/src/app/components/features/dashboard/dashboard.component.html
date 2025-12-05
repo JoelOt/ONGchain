@@ -1,0 +1,99 @@
+<div class="dashboard">
+    <div class="hero-section">
+        <h1>🎁 Bienvenido a ONGchain</h1>
+        <p class="subtitle">Sistema de trazabilidad de donaciones basado en blockchain</p>
+    </div>
+
+    @if (walletState().connected) {
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">👤</div>
+            <div class="stat-content">
+                <div class="stat-label">Tu Rol</div>
+                <div class="stat-value">{{ userRole() }}</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">🔗</div>
+            <div class="stat-content">
+                <div class="stat-label">Red</div>
+                <div class="stat-value">{{ networkName() }}</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">💼</div>
+            <div class="stat-content">
+                <div class="stat-label">Dirección</div>
+                <div class="stat-value address">{{ formattedAddress() }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="actions-section">
+        <h2>Acciones Rápidas</h2>
+        <div class="actions-grid">
+            @if (isOwner()) {
+            <a routerLink="/ong-management" class="action-card owner">
+                <div class="action-icon">🏢</div>
+                <h3>Gestionar ONGs</h3>
+                <p>Autorizar o revocar ONGs</p>
+            </a>
+            }
+
+            @if (isAuthorizedONG()) {
+            <a routerLink="/create-donation" class="action-card ong">
+                <div class="action-icon">➕</div>
+                <h3>Crear Donación</h3>
+                <p>Emitir nuevo token de donación</p>
+            </a>
+            <a routerLink="/update-location" class="action-card ong">
+                <div class="action-icon">📍</div>
+                <h3>Actualizar Ubicación</h3>
+                <p>Registrar movimiento de donación</p>
+            </a>
+            }
+
+            <a routerLink="/track" class="action-card">
+                <div class="action-icon">🔍</div>
+                <h3>Rastrear Donación</h3>
+                <p>Ver historial de trazabilidad</p>
+            </a>
+
+            <a routerLink="/my-donations" class="action-card">
+                <div class="action-icon">📦</div>
+                <h3>Mis Donaciones</h3>
+                <p>Ver tokens recibidos</p>
+            </a>
+        </div>
+    </div>
+    } @else {
+    <div class="connect-prompt">
+        <div class="prompt-icon">🔐</div>
+        <h2>Conecta tu Wallet</h2>
+        <p>Para comenzar a usar ONGchain, conecta tu wallet de MetaMask</p>
+    </div>
+    }
+
+    <div class="info-section">
+        <h2>¿Cómo funciona?</h2>
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-number">1</div>
+                <h3>ONG Crea Token</h3>
+                <p>Una ONG autorizada crea un NFT de donación con ubicación inicial</p>
+            </div>
+            <div class="info-card">
+                <div class="info-number">2</div>
+                <h3>Trazabilidad</h3>
+                <p>Se registran todos los movimientos del producto con ubicación y timestamp</p>
+            </div>
+            <div class="info-card">
+                <div class="info-number">3</div>
+                <h3>Transparencia</h3>
+                <p>Cualquiera puede verificar el estado y ubicación de la donación</p>
+            </div>
+        </div>
+    </div>
+</div>

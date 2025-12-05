@@ -1,0 +1,27 @@
+<header class="header">
+    <div class="header-content">
+        <div class="logo-section">
+            <a routerLink="/" class="logo">
+                <span class="logo-icon">🎁</span>
+                <span class="logo-text">ONGchain</span>
+            </a>
+            <span class="tagline">Trazabilidad de Donaciones</span>
+        </div>
+
+        <nav class="nav">
+            <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+                Dashboard
+            </a>
+            <a routerLink="/track" routerLinkActive="active">
+                Rastrear
+            </a>
+            <a routerLink="/my-donations" routerLinkActive="active">
+                Mis Donaciones
+            </a>
+        </nav>
+
+        <div class="wallet-section">
+            <app-wallet-connect />
+        </div>
+    </div>
+</header>

@@ -1,0 +1,78 @@
+<div class="tracker-container">
+    <div class="tracker-header">
+        <h2>🔍 Rastrear Donación</h2>
+        <p>Ingresa el ID del token para ver su historial de trazabilidad</p>
+    </div>
+
+    <div class="search-section">
+        <input type="number" [(ngModel)]="tokenId" placeholder="ID del Token (ej: 0, 1, 2...)" class="token-input"
+            (keyup.enter)="searchToken()" />
+        <button (click)="searchToken()" [disabled]="loading()" class="search-btn">
+            @if (loading()) {
+            <span class="spinner"></span>
+            } @else {
+            Buscar
+            }
+        </button>
+    </div>
+
+    @if (error()) {
+    <div class="error-box">
+        ❌ {{ error() }}
+    </div>
+    }
+
+    @if (tokenData()) {
+    <div class="token-details">
+        <div class="detail-card">
+            <h3>📦 Información del Token</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="label">Token ID:</span>
+                    <span class="value">{{ tokenId }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Descripción:</span>
+                    <span class="value">{{ tokenData()!.description }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Fecha de Expiración:</span>
+                    <span class="value">{{ formatDate(tokenData()!.expiration) }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Estado:</span>
+                    <span class="value" [class.expired]="isExpired()">
+                        {{ getStatus() }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-card">
+            <h3>📍 Historial de Ubicaciones</h3>
+            <div class="timeline">
+                @for (location of tokenData()!.locations; track $index) {
+                <div class="timeline-item" [class.used]="location.used">
+                    <div class="timeline-marker">
+                        <span class="marker-dot"></span>
+                        @if ($index < tokenData()!.locations.length - 1) { <span class="marker-line"></span>
+                            }
+                    </div>
+                    <div class="timeline-content">
+                        <div class="location-header">
+                            <span class="location-name">{{ location.location }}</span>
+                            @if (location.used) {
+                            <span class="used-badge">✓ Usado</span>
+                            }
+                        </div>
+                        <div class="location-time">
+                            {{ formatTimestamp(location.timestamp) }}
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+    }
+</div>

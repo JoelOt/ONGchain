@@ -1,0 +1,33 @@
+<div class="update-location">
+    <h2>📍 Actualizar Ubicación</h2>
+    <form (ngSubmit)="updateLocation()" class="update-form">
+        <div class="form-group">
+            <label>Token ID</label>
+            <input type="number" [(ngModel)]="tokenId" name="tokenId" required />
+        </div>
+
+        <div class="form-group">
+            <label>Nueva Ubicación</label>
+            <input type="text" [(ngModel)]="location" name="location" required
+                placeholder="Ej: En tránsito - Ruta 23" />
+        </div>
+
+        <div class="form-group">
+            <label>
+                <input type="checkbox" [(ngModel)]="markAsUsed" name="used" />
+                Marcar como usado (entrega final)
+            </label>
+        </div>
+
+        <button type="submit" [disabled]="loading()">
+            {{ loading() ? 'Actualizando...' : 'Actualizar' }}
+        </button>
+    </form>
+
+    @if (success()) {
+    <div class="success">✓ Ubicación actualizada</div>
+    }
+    @if (error()) {
+    <div class="error">{{ error() }}</div>
+    }
+</div>
