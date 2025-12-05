@@ -15,18 +15,15 @@ contract TraceDonation {
     }
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "No autorizado");
+        require(msg.sender == owner, "No autoritzat");
         _;
     }
 
     modifier soloONG() { //rol perque sols pugui crear NFTs les ONG
-        require(ongAutorizada[msg.sender], "ONG no autorizada");
+        require(ongAutorizada[msg.sender], "ONG no autoritzada");
         _;
     }
 
-    // -------------------------
-    // Gestión de ONGs
-    // -------------------------
     function autorizarONG(address ong) public onlyOwner {
         ongAutorizada[ong] = true;
     }
@@ -40,10 +37,6 @@ contract TraceDonation {
         return token.safeMint(donant, descripcion, expiration, location);
     }
 
-    // -------------------------
-    // Usar token
-    // -------------------------
-
     function getTokenData(uint256 tokenId) public view returns (string memory, DonationItem.Location[] memory, uint256){
         return token.getTokenData(tokenId);
     }
@@ -56,10 +49,14 @@ contract TraceDonation {
         token.markAsUsed(tokenId, location, used);
     }
 
+    function getNFTlist() public view returns (uint256[] memory) {
+        return token.tokensOfOwner(msg.sender);
+    }
 }
 
 
 /* 
+
 1- ONG crea NFT i li envia al Client (location inicial, timestamp, not used)
 2- ONG marca els moviments que es realitzen al producte afegint una location + timestamp com a "Not used". (usarToken(tokenId, false, location))
 3- Client pot veure el estat del producte fent getTokenData(tokenId)

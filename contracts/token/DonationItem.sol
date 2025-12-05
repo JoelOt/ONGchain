@@ -5,8 +5,10 @@ pragma solidity ^0.8.27;
 
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import  {ERC721Enumerable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
-contract DonationItem is ERC721, AccessControl {
+
+contract DonationItem is ERC721, ERC721Enumerable, AccessControl {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     uint256 private _nextTokenId;
 
@@ -17,8 +19,8 @@ contract DonationItem is ERC721, AccessControl {
     }
 
     struct TokenData {
-        string description;  //que es? Ex: Paquet Arròs 1 Kg
-        Location[] locations;   
+        string description;  //que es. Ex: Paquet Arròs 1 Kg
+        Location[] locations;   //per on passa el item.
         uint256 expiration;  //si es menjar, quan caduca
     }
     mapping(uint256 => TokenData) public tokenData;
@@ -47,18 +49,33 @@ contract DonationItem is ERC721, AccessControl {
         return tokenId;
     }
 
-    // The following functions are overrides required by Solidity.
-
+    //override obligatori enumerable
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC721, AccessControl)
+        override(ERC721, ERC721Enumerable, AccessControl)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
     }
+
+    function _increaseBalance(address account, uint128 value)
+        internal
+        override(ERC721, ERC721Enumerable)
+    {
+        super._increaseBalance(account, value);
+    }
+    //override obligatori enumerable
+    function _update(
+        address to,
+        uint256 tokenId,
+        address auth
+    ) internal override(ERC721, ERC721Enumerable) returns (address) {
+        return super._update(to, tokenId, auth);
+    }
+
+
     
-    //custom
     function markAsUsed(uint256 tokenId, string memory location, bool used) public onlyRole(MINTER_ROLE) {
         
             tokenData[tokenId].locations.push(Location({
@@ -68,7 +85,7 @@ contract DonationItem is ERC721, AccessControl {
             }));
     }
 
-    function isUsed(uint256 tokenId) public view returns (bool) {  //auxiliar
+    function isUsed(uint256 tokenId) public view returns (bool) {
         Location memory loc = tokenData[tokenId].locations[tokenData[tokenId].locations.length - 1];
         require(!loc.used, "Fet servir");
     }
@@ -90,4 +107,14 @@ contract DonationItem is ERC721, AccessControl {
         return (data.description, data.locations, data.expiration);
     }
 
+    function tokensOfOwner(address owner) public view returns (uint256[] memory) {
+        uint256 balance = balanceOf(owner);
+        uint256[] memory tokens = new uint256[](balance);
+
+        for (uint256 i = 0; i < balance; i++) {
+            tokens[i] = tokenOfOwnerByIndex(owner, i);
+        }
+
+        return tokens;
+    }
 }

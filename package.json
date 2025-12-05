@@ -1,0 +1,29 @@
+{
+  "name": "ongchain",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoelOt/ONGchain.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/JoelOt/ONGchain/issues"
+  },
+  "homepage": "https://github.com/JoelOt/ONGchain#readme",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^6.1.0",
+    "@nomicfoundation/hardhat-verify": "^2.1.3",
+    "hardhat": "^3.0.17"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3"
+  }
+}
