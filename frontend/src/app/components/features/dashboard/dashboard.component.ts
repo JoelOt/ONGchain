@@ -1,8 +1,7 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Web3Service } from '../../../services/web3.service';
-import { TraceDonationService } from '../../../services/trace-donation.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,38 +10,16 @@ import { TraceDonationService } from '../../../services/trace-donation.service';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent {
   private web3Service = inject(Web3Service);
-  private traceDonationService = inject(TraceDonationService);
 
   walletState = this.web3Service.walletState;
-  isOwner = signal(false);
-  isAuthorizedONG = signal(false);
 
-  async ngOnInit() {
-    if (this.walletState().connected) {
-      await this.checkUserRole();
-    }
-  }
-
-  async checkUserRole() {
-    try {
-      const [owner, authorized] = await Promise.all([
-        this.traceDonationService.isCurrentUserOwner(),
-        this.traceDonationService.isCurrentUserAuthorizedONG()
-      ]);
-      this.isOwner.set(owner);
-      this.isAuthorizedONG.set(authorized);
-    } catch (error) {
-      console.error('Error checking user role:', error);
-    }
-  }
-
-  userRole(): string {
-    if (this.isOwner()) return '👑 Owner';
-    if (this.isAuthorizedONG()) return '🏢 ONG Autorizada';
-    return '👤 Usuario';
-  }
+  /**
+   * Nota: No verificamos roles en el frontend.
+   * El smart contract validará los permisos cuando se intenten ejecutar transacciones.
+   * Esto es más seguro y simplifica el código.
+   */
 
   networkName(): string {
     const chainId = this.walletState().chainId;

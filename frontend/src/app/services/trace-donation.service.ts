@@ -3,6 +3,7 @@ import { Contract } from 'ethers';
 import { Web3Service } from './web3.service';
 import { environment } from '../../environments/environment';
 import { TokenData } from '../contracts/interfaces/contracts.interface';
+import { bigIntArrayFromContract } from '../utils/bigint.utils';
 import TraceDonationABI from '../contracts/abis/TraceDonation.abi.json';
 
 @Injectable({
@@ -31,23 +32,8 @@ export class TraceDonationService {
     }
 
     /**
-     * Obtiene la dirección del owner del contrato
-     */
-    async getOwner(): Promise<string> {
-        const contract = await this.getContract();
-        return await contract.owner();
-    }
-
-    /**
-     * Verifica si una dirección es una ONG autorizada
-     */
-    async isONGAutorizada(address: string): Promise<boolean> {
-        const contract = await this.getContract();
-        return await contract.ongAutorizada(address);
-    }
-
-    /**
      * Autoriza una ONG (solo owner)
+     * El contrato valida que msg.sender sea el owner
      */
     async autorizarONG(ongAddress: string): Promise<string> {
         const contract = await this.getContract();
@@ -58,6 +44,7 @@ export class TraceDonationService {
 
     /**
      * Revoca la autorización de una ONG (solo owner)
+     * El contrato valida que msg.sender sea el owner
      */
     async revocarONG(ongAddress: string): Promise<string> {
         const contract = await this.getContract();
@@ -68,29 +55,18 @@ export class TraceDonationService {
 
     /**
      * Emite un nuevo token de donación (solo ONG autorizada)
+     * El contrato valida que msg.sender sea una ONG autorizada
      */
     async emitirToken(
         donantAddress: string,
         descripcion: string,
         location: string,
         expiration: bigint
-    ): Promise<{ txHash: string; tokenId?: bigint }> {
+    ): Promise<string> {
         const contract = await this.getContract();
         const tx = await contract.emitirToken(donantAddress, descripcion, location, expiration);
-        const receipt = await tx.wait();
-
-        // Buscar el evento de creación del token para obtener el tokenId
-        // El evento viene del contrato DonationItem
-        let tokenId: bigint | undefined;
-        if (receipt.logs && receipt.logs.length > 0) {
-            // El tokenId se puede extraer de los logs del evento Transfer
-            // Por ahora lo dejamos como opcional
-        }
-
-        return {
-            txHash: tx.hash,
-            tokenId
-        };
+        await tx.wait();
+        return tx.hash;
     }
 
     /**
@@ -113,6 +89,11 @@ export class TraceDonationService {
 
     /**
      * Marca un token como usado y agrega una nueva ubicación (solo ONG autorizada)
+     * El contrato valida:
+     * - Que msg.sender sea una ONG autorizada
+     * - Que el token exista
+     * - Que el token no esté usado
+     * - Que el token no esté expirado
      */
     async useToken(
         tokenId: bigint,
@@ -126,36 +107,11 @@ export class TraceDonationService {
     }
 
     /**
-     * Verifica si el usuario actual es el owner
-     */
-    async isCurrentUserOwner(): Promise<boolean> {
-        const walletState = this.web3Service.walletState();
-        if (!walletState.address) {
-            return false;
-        }
-
-        const owner = await this.getOwner();
-        return owner.toLowerCase() === walletState.address.toLowerCase();
-    }
-
-    /**
-     * Verifica si el usuario actual es una ONG autorizada
-     */
-    async isCurrentUserAuthorizedONG(): Promise<boolean> {
-        const walletState = this.web3Service.walletState();
-        if (!walletState.address) {
-            return false;
-        }
-
-        return await this.isONGAutorizada(walletState.address);
-    }
-
-    /**
      * Obtiene la lista de tokens (NFTs) del usuario actual
      */
     async getNFTlist(): Promise<bigint[]> {
         const contract = await this.getContract();
         const tokens = await contract.getNFTlist();
-        return tokens.map((token: any) => BigInt(token.toString()));
+        return bigIntArrayFromContract(tokens);
     }
 }

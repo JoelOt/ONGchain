@@ -7,14 +7,6 @@
     @if (walletState().connected) {
     <div class="stats-grid">
         <div class="stat-card">
-            <div class="stat-icon">👤</div>
-            <div class="stat-content">
-                <div class="stat-label">Tu Rol</div>
-                <div class="stat-value">{{ userRole() }}</div>
-            </div>
-        </div>
-
-        <div class="stat-card">
             <div class="stat-icon">🔗</div>
             <div class="stat-content">
                 <div class="stat-label">Red</div>
@@ -32,28 +24,26 @@
     </div>
 
     <div class="actions-section">
-        <h2>Acciones Rápidas</h2>
+        <h2>Acciones Disponibles</h2>
+        <p class="actions-note">El contrato validará tus permisos al ejecutar cada acción</p>
         <div class="actions-grid">
-            @if (isOwner()) {
             <a routerLink="/ong-management" class="action-card owner">
                 <div class="action-icon">🏢</div>
                 <h3>Gestionar ONGs</h3>
                 <p>Autorizar o revocar ONGs</p>
             </a>
-            }
 
-            @if (isAuthorizedONG()) {
             <a routerLink="/create-donation" class="action-card ong">
                 <div class="action-icon">➕</div>
                 <h3>Crear Donación</h3>
                 <p>Emitir nuevo token de donación</p>
             </a>
+
             <a routerLink="/update-location" class="action-card ong">
                 <div class="action-icon">📍</div>
                 <h3>Actualizar Ubicación</h3>
                 <p>Registrar movimiento de donación</p>
             </a>
-            }
 
             <a routerLink="/track" class="action-card">
                 <div class="action-icon">🔍</div>

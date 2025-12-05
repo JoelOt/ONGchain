@@ -2,6 +2,7 @@ import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TraceDonationService } from '../../../services/trace-donation.service';
+import { toBigInt } from '../../../utils/bigint.utils';
 
 @Component({
   selector: 'app-update-location',
@@ -27,7 +28,7 @@ export class UpdateLocationComponent {
 
     try {
       await this.traceDonationService.useToken(
-        BigInt(this.tokenId),
+        toBigInt(this.tokenId),
         this.location,
         this.markAsUsed
       );

@@ -2,6 +2,7 @@ import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TraceDonationService } from '../../../services/trace-donation.service';
+import { dateToTimestamp } from '../../../utils/date.utils';
 
 @Component({
   selector: 'app-create-donation',
@@ -27,14 +28,14 @@ export class CreateDonationComponent {
     this.error.set(null);
 
     try {
-      const expiration = BigInt(new Date(this.expirationDate).getTime() / 1000);
-      const result = await this.traceDonationService.emitirToken(
+      const expiration = dateToTimestamp(new Date(this.expirationDate));
+      const txHash = await this.traceDonationService.emitirToken(
         this.donantAddress,
         this.description,
         this.location,
         expiration
       );
-      this.success.set(result.txHash);
+      this.success.set(txHash);
       // Reset form
       this.donantAddress = '';
       this.description = '';

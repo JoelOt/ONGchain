@@ -35,29 +35,20 @@
     </div>
     }
 
-    <div class="check-section">
-        <h3>Verificar Estado de ONG</h3>
-        <div class="check-form">
-            <input type="text" [(ngModel)]="checkAddress" placeholder="Dirección a verificar" class="address-input" />
-            <button (click)="checkONG()" [disabled]="!checkAddress" class="check-btn">
-                Verificar
-            </button>
+
+    <div class="revoke-section">
+        <h3>Revocar Autorización</h3>
+        <div class="form-group">
+            <input type="text" [(ngModel)]="revokeAddress" placeholder="Dirección a revocar (0x...)"
+                class="address-input" />
         </div>
-        @if (checkResult()) {
-        <div class="check-result" [class.authorized]="checkResult()!.isAuthorized">
-            @if (checkResult()!.isAuthorized) {
-            <span class="status-icon">✓</span>
-            <span>Esta dirección está autorizada como ONG</span>
+        <button (click)="revokeONG()" [disabled]="loading() || !revokeAddress" class="revoke-btn">
+            @if (loading()) {
+            <span class="spinner"></span>
+            Procesando...
             } @else {
-            <span class="status-icon">✗</span>
-            <span>Esta dirección NO está autorizada</span>
+            ✗ Revocar Autorización
             }
-            @if (checkResult()!.isAuthorized) {
-            <button (click)="revokeONG(checkAddress)" class="revoke-btn">
-                Revocar Autorización
-            </button>
-            }
-        </div>
-        }
+        </button>
     </div>
 </div>

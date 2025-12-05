@@ -2,9 +2,12 @@ import { Routes } from '@angular/router';
 import { DashboardComponent } from './components/features/dashboard/dashboard.component';
 import { DonationTrackerComponent } from './components/features/donation-tracker/donation-tracker.component';
 import { OngManagementComponent } from './components/features/ong-management/ong-management.component';
-import { ownerGuard } from './guards/owner.guard';
-import { authorizedOngGuard } from './guards/authorized-ong.guard';
 
+/**
+ * Nota: No usamos guards para validar permisos.
+ * El smart contract validará los permisos cuando se intenten ejecutar transacciones.
+ * Esto es más seguro y simplifica el código.
+ */
 export const routes: Routes = [
     {
         path: '',
@@ -16,20 +19,17 @@ export const routes: Routes = [
     },
     {
         path: 'ong-management',
-        component: OngManagementComponent,
-        canActivate: [ownerGuard]
+        component: OngManagementComponent
     },
     {
         path: 'create-donation',
         loadComponent: () => import('./components/features/create-donation/create-donation.component')
-            .then(m => m.CreateDonationComponent),
-        canActivate: [authorizedOngGuard]
+            .then(m => m.CreateDonationComponent)
     },
     {
         path: 'update-location',
         loadComponent: () => import('./components/features/update-location/update-location.component')
-            .then(m => m.UpdateLocationComponent),
-        canActivate: [authorizedOngGuard]
+            .then(m => m.UpdateLocationComponent)
     },
     {
         path: 'my-donations',

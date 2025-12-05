@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TraceDonationService } from '../../../services/trace-donation.service';
 import { TokenData } from '../../../contracts/interfaces/contracts.interface';
+import { formatTimestamp, isTimestampExpired } from '../../../utils/date.utils';
 
 interface DonationToken {
   tokenId: bigint;
@@ -81,25 +82,18 @@ export class MyDonationsComponent implements OnInit {
    * Formatea una fecha desde timestamp
    */
   formatDate(timestamp: bigint): string {
-    const date = new Date(Number(timestamp) * 1000);
-    return date.toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    return formatTimestamp(timestamp);
   }
 
   /**
-   * Verifica si un token está expirado
+   * Verifica si un token está expirado (solo para mostrar en UI)
    */
   isExpired(expiration: bigint): boolean {
-    return Date.now() > Number(expiration) * 1000;
+    return isTimestampExpired(expiration);
   }
 
   /**
-   * Verifica si un token está usado
+   * Verifica si un token está usado (solo para mostrar en UI)
    */
   isUsed(data: TokenData): boolean {
     if (!data.locations || data.locations.length === 0) {
@@ -109,7 +103,7 @@ export class MyDonationsComponent implements OnInit {
   }
 
   /**
-   * Obtiene el estado del token
+   * Obtiene el estado del token (solo para mostrar en UI)
    */
   getTokenStatus(data: TokenData): string {
     if (this.isUsed(data)) {
@@ -122,7 +116,7 @@ export class MyDonationsComponent implements OnInit {
   }
 
   /**
-   * Obtiene la clase CSS según el estado
+   * Obtiene la clase CSS según el estado (solo para mostrar en UI)
    */
   getStatusClass(data: TokenData): string {
     if (this.isUsed(data)) {

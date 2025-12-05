@@ -12,14 +12,19 @@ import { TraceDonationService } from '../../../services/trace-donation.service';
 })
 export class OngManagementComponent {
   newOngAddress = '';
-  checkAddress = '';
+  revokeAddress = '';
   loading = signal(false);
   success = signal<string | null>(null);
   error = signal<string | null>(null);
   addressError = signal<string | null>(null);
-  checkResult = signal<{ isAuthorized: boolean } | null>(null);
 
   constructor(private traceDonationService: TraceDonationService) { }
+
+  /**
+   * Nota: No verificamos permisos en el frontend.
+   * El smart contract validará que msg.sender sea el owner cuando se ejecuten
+   * las transacciones autorizarONG() o revocarONG().
+   */
 
   validateAddress(address: string): boolean {
     if (!address) {
@@ -55,21 +60,11 @@ export class OngManagementComponent {
     }
   }
 
-  async checkONG() {
-    if (!this.validateAddress(this.checkAddress)) {
+  async revokeONG() {
+    if (!this.validateAddress(this.revokeAddress)) {
       return;
     }
 
-    try {
-      const isAuthorized = await this.traceDonationService.isONGAutorizada(this.checkAddress);
-      this.checkResult.set({ isAuthorized });
-    } catch (err: any) {
-      console.error('Error verificando ONG:', err);
-      this.error.set('Error al verificar el estado de la ONG');
-    }
-  }
-
-  async revokeONG(address: string) {
     if (!confirm('¿Estás seguro de que deseas revocar la autorización de esta ONG?')) {
       return;
     }
@@ -79,10 +74,9 @@ export class OngManagementComponent {
     this.error.set(null);
 
     try {
-      const txHash = await this.traceDonationService.revocarONG(address);
+      const txHash = await this.traceDonationService.revocarONG(this.revokeAddress);
       this.success.set(`Autorización revocada exitosamente. TX: ${txHash.substring(0, 10)}...`);
-      this.checkResult.set(null);
-      this.checkAddress = '';
+      this.revokeAddress = '';
     } catch (err: any) {
       console.error('Error revocando ONG:', err);
       this.error.set(err.message || 'Error al revocar la autorización');
