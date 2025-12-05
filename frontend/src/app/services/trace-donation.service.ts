@@ -149,4 +149,13 @@ export class TraceDonationService {
 
         return await this.isONGAutorizada(walletState.address);
     }
+
+    /**
+     * Obtiene la lista de tokens (NFTs) del usuario actual
+     */
+    async getNFTlist(): Promise<bigint[]> {
+        const contract = await this.getContract();
+        const tokens = await contract.getNFTlist();
+        return tokens.map((token: any) => BigInt(token.toString()));
+    }
 }

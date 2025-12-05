@@ -2,8 +2,8 @@ export const environment = {
     production: false,
     contracts: {
         // TODO: Actualizar con las direcciones reales después del despliegue
-        traceDonation: '0x11Fd83630039dBA6d4a100b7F3329339ACfBAFDe',
-        donationItem: '0x6B9d14Cc30b3F3FB8619F7FbB8aaD05aB588Fb01',
+        traceDonation: '0x319b1BC2a3f3120e10C2Aa11f7a1Bd38e070f5E6',
+        donationItem: '0x22d444E891048725F7aa8DC466c4157C4A5d8603',
     },
     network: {
         chainId: 11155111, // Sepolia Testnet

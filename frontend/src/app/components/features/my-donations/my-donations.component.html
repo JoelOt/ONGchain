@@ -1,7 +1,86 @@
 <div class="my-donations">
     <h2>📦 Mis Donaciones</h2>
-    <div class="info-box">
-        <p>Esta funcionalidad requiere indexar eventos de la blockchain.</p>
-        <p>Por ahora, puedes rastrear donaciones usando el Token ID en la sección "Rastrear".</p>
+
+    <!-- Loading state -->
+    <div *ngIf="loading" class="loading-container">
+        <div class="spinner"></div>
+        <p>Cargando tus donaciones...</p>
+    </div>
+
+    <!-- Error state -->
+    <div *ngIf="error && !loading" class="error-box">
+        <p>❌ {{ error }}</p>
+        <button (click)="loadMyDonations()" class="retry-button">Reintentar</button>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="!loading && !error && tokens.length === 0" class="empty-state">
+        <div class="empty-icon">📭</div>
+        <h3>No tienes donaciones</h3>
+        <p>Aún no has recibido ningún token de donación.</p>
+    </div>
+
+    <!-- Tokens list -->
+    <div *ngIf="!loading && !error && tokens.length > 0" class="tokens-grid">
+        <div *ngFor="let token of tokens" class="token-card">
+            <!-- Token header -->
+            <div class="token-header">
+                <h3>Token #{{ token.tokenId }}</h3>
+                <span *ngIf="token.data" class="status-badge" [ngClass]="getStatusClass(token.data)">
+                    {{ getTokenStatus(token.data) }}
+                </span>
+            </div>
+
+            <!-- Token loading -->
+            <div *ngIf="token.loading" class="token-loading">
+                <div class="spinner-small"></div>
+                <p>Cargando datos...</p>
+            </div>
+
+            <!-- Token error -->
+            <div *ngIf="token.error && !token.loading" class="token-error">
+                <p>⚠️ {{ token.error }}</p>
+            </div>
+
+            <!-- Token data -->
+            <div *ngIf="token.data && !token.loading" class="token-content">
+                <!-- Description -->
+                <div class="token-section">
+                    <h4>📝 Descripción</h4>
+                    <p>{{ token.data.description }}</p>
+                </div>
+
+                <!-- Expiration -->
+                <div class="token-section">
+                    <h4>⏰ Fecha de Expiración</h4>
+                    <p [class.expired]="isExpired(token.data.expiration)">
+                        {{ formatDate(token.data.expiration) }}
+                        <span *ngIf="isExpired(token.data.expiration)" class="expired-label">
+                            (Expirado)
+                        </span>
+                    </p>
+                </div>
+
+                <!-- Locations -->
+                <div class="token-section">
+                    <h4>📍 Historial de Ubicaciones</h4>
+                    <div class="locations-timeline">
+                        <div *ngFor="let location of token.data.locations; let i = index" class="location-item"
+                            [class.location-used]="location.used">
+                            <div class="location-marker">
+                                <span class="location-number">{{ i + 1 }}</span>
+                            </div>
+                            <div class="location-details">
+                                <p class="location-name">
+                                    {{ location.location }}
+                                    <span *ngIf="location.used" class="used-badge">✓ Utilizado</span>
+                                </p>
+                                <p class="location-date">{{ formatDate(location.timestamp) }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
