@@ -20,7 +20,6 @@ declare global {
 export class Web3Service {
     private provider: BrowserProvider | null = null;
 
-    // Signals para estado reactivo
     walletState = signal<WalletState>({
         address: null,
         chainId: null,
@@ -89,9 +88,6 @@ export class Web3Service {
         return this.provider;
     }
 
-    /**
-     * Obtiene el signer actual
-     */
     async getSigner() {
         if (!this.provider) {
             throw new Error('Wallet no conectada');
@@ -109,7 +105,6 @@ export class Web3Service {
                 params: [{ chainId: `0x${environment.network.chainId.toString(16)}` }],
             });
         } catch (error: any) {
-            // Si la red no está agregada, intentar agregarla
             if (error.code === 4902) {
                 await this.addNetwork();
             } else {
@@ -118,9 +113,6 @@ export class Web3Service {
         }
     }
 
-    /**
-     * Agrega la red configurada a MetaMask
-     */
     private async addNetwork(): Promise<void> {
         await window.ethereum!.request({
             method: 'wallet_addEthereumChain',
@@ -133,9 +125,6 @@ export class Web3Service {
         });
     }
 
-    /**
-     * Actualiza el estado de la wallet
-     */
     private async updateWalletState(address: string): Promise<void> {
         if (!this.provider) return;
 
@@ -145,18 +134,15 @@ export class Web3Service {
             address: address,
             chainId: Number(network.chainId),
             connected: true,
-            isOwner: false, // Se actualizará desde el servicio de contrato
-            isAuthorizedONG: false // Se actualizará desde el servicio de contrato
+            isOwner: false,
+            isAuthorizedONG: false
         });
     }
 
-    /**
-     * Inicializa los listeners de eventos de MetaMask
-     */
+
     private initializeListeners(): void {
         if (!window.ethereum) return;
 
-        // Detectar cambio de cuenta
         window.ethereum.on('accountsChanged', async (accounts: string[]) => {
             if (accounts.length === 0) {
                 this.disconnectWallet();
@@ -165,24 +151,19 @@ export class Web3Service {
             }
         });
 
-        // Detectar cambio de red
         window.ethereum.on('chainChanged', () => {
-            // Recargar la página es la forma recomendada por MetaMask
             window.location.reload();
         });
     }
 
     /**
-     * Formatea una dirección para mostrar (0x1234...5678)
+     * Solo para mostrarla 
      */
     formatAddress(address: string): string {
         if (!address) return '';
         return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
     }
 
-    /**
-     * Obtiene el balance de ETH de una dirección
-     */
     async getBalance(address: string): Promise<string> {
         if (!this.provider) {
             throw new Error('Wallet no conectada');

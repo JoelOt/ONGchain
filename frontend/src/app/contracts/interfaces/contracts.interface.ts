@@ -21,7 +21,6 @@ export interface NetworkConfig {
 
 export interface ContractAddresses {
     traceDonation: string;
-    donationItem: string;
 }
 
 export interface WalletState {
